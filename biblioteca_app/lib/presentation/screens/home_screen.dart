@@ -40,9 +40,9 @@ class HomeScreen extends StatelessWidget {
     } else {
       cuerpo = RefreshIndicator(
         onRefresh: c.cargar,
-        child: ListView.separated(
+        child: ListView.builder(
+          padding: const EdgeInsets.only(top: 8, bottom: 96),
           itemCount: c.items.length,
-          separatorBuilder: (_, __) => const Divider(height: 1),
           itemBuilder: (_, i) => LibroTile(libro: c.items[i]),
         ),
       );

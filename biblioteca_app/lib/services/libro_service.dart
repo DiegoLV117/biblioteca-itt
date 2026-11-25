@@ -26,8 +26,10 @@ class LibroService {
   //   - Usen dio.put(ruta, data: body)
   //   - Spring Boot responde 200 con el libro actualizado: regresen res.data
   // ---------------------------------------------------------------------------
-  Future<Map<String, dynamic>> actualizar(int id, Map<String, dynamic> body) async {
-    throw UnimplementedError('TODO 1a: falta el PUT en LibroService.actualizar');
+  Future<Map<String, dynamic>> actualizar(
+      int id, Map<String, dynamic> body) async {
+    final res = await dio.put('${ApiConfig.libros}/$id', data: body);
+    return res.data as Map<String, dynamic>;
   }
 
   // ---------------------------------------------------------------------------
@@ -37,6 +39,6 @@ class LibroService {
   //   - Spring Boot responde 204 (sin JSON): no hay nada que regresar
   // ---------------------------------------------------------------------------
   Future<void> eliminar(int id) async {
-    throw UnimplementedError('TODO 1b: falta el DELETE en LibroService.eliminar');
+    await dio.delete('${ApiConfig.libros}/$id');
   }
 }

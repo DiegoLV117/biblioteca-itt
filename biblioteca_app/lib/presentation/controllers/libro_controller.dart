@@ -60,14 +60,30 @@ class LibroController extends ChangeNotifier {
   //   Atrapen DioException y cualquier otro error, igual que en crear().
   // ---------------------------------------------------------------------------
   Future<String?> actualizar(Libro libro) async {
-    return 'TODO 3a: falta implementar actualizar() en LibroController';
+    try {
+      await repo.actualizar(libro);
+      await cargar(); // recargar la lista para ver el cambio
+      return null;
+    } on DioException catch (e) {
+      return _mensaje(e);
+    } catch (e) {
+      return '$e';
+    }
   }
 
   // ---------------------------------------------------------------------------
   // TODO 3b (DELETE): igual que el anterior, pero con repo.eliminar(id).
   // ---------------------------------------------------------------------------
   Future<String?> eliminar(int id) async {
-    return 'TODO 3b: falta implementar eliminar() en LibroController';
+    try {
+      await repo.eliminar(id);
+      await cargar(); // recargar la lista para ver el cambio
+      return null;
+    } on DioException catch (e) {
+      return _mensaje(e);
+    } catch (e) {
+      return '$e';
+    }
   }
 
   String _mensaje(DioException e) {

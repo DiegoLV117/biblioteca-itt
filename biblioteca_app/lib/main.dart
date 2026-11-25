@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/theme/app_theme.dart';
+import 'core/theme/tema_controller.dart';
 import 'domain/repository/libro_repository.dart';
 import 'networking/dio_client.dart';
 import 'presentation/controllers/libro_controller.dart';
@@ -18,6 +19,7 @@ void main() {
     MultiProvider(
       providers: [
         Provider<DioClient>.value(value: dioClient),
+        ChangeNotifierProvider(create: (_) => TemaController()),
         ChangeNotifierProvider(
           create: (_) => LibroController(repository)..cargar(),
         ),
@@ -32,12 +34,13 @@ class BibliotecaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tema = context.watch<TemaController>();
     return MaterialApp.router(
       title: 'Biblioteca ITT',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
+      themeMode: tema.modo,
       routerConfig: appRouter,
     );
   }

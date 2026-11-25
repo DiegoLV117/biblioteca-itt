@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/theme/tema_controller.dart';
 import '../controllers/libro_controller.dart';
 import '../widgets/libro_tile.dart';
 
@@ -12,6 +13,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.watch<LibroController>();
+    final tema = context.watch<TemaController>();
 
     Widget cuerpo;
     if (c.loading) {
@@ -27,7 +29,8 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 12),
               Text(c.error!, textAlign: TextAlign.center),
               const SizedBox(height: 12),
-              FilledButton(onPressed: c.cargar, child: const Text('Reintentar')),
+              FilledButton(
+                  onPressed: c.cargar, child: const Text('Reintentar')),
             ],
           ),
         ),
@@ -49,6 +52,11 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Biblioteca ITT'),
         actions: [
+          IconButton(
+            tooltip: tema.oscuro ? 'Modo claro' : 'Modo oscuro',
+            icon: Icon(tema.oscuro ? Icons.light_mode : Icons.dark_mode),
+            onPressed: tema.alternar,
+          ),
           IconButton(
             tooltip: 'Recargar (GET)',
             icon: const Icon(Icons.refresh),

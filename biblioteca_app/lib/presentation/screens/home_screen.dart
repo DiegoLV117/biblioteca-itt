@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/tema_controller.dart';
 import '../controllers/libro_controller.dart';
 import '../widgets/libro_tile.dart';
+import '../widgets/resumen_header.dart';
 
 /// Lista de libros (GET). Escucha al controller con context.watch.
 class HomeScreen extends StatelessWidget {
@@ -42,8 +43,19 @@ class HomeScreen extends StatelessWidget {
         onRefresh: c.cargar,
         child: ListView.builder(
           padding: const EdgeInsets.only(top: 8, bottom: 96),
-          itemCount: c.items.length,
-          itemBuilder: (_, i) => LibroTile(libro: c.items[i]),
+          // +1 porque el primer elemento es el resumen
+          itemCount: c.items.length + 1,
+          itemBuilder: (_, i) {
+            if (i == 0) {
+              final disponibles = c.items.where((l) => l.disponible).length;
+              return ResumenHeader(
+                total: c.items.length,
+                disponibles: disponibles,
+                prestados: c.items.length - disponibles,
+              );
+            }
+            return LibroTile(libro: c.items[i - 1]);
+          },
         ),
       );
     }
@@ -68,7 +80,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/nuevo'),
         icon: const Icon(Icons.add),
-        label: const Text('Nuevo (POST)'),
+        label: const Text('Nuevo libro'),
       ),
     );
   }

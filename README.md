@@ -46,3 +46,7 @@ flutter run
 ```
 
 En el emulador Android la app se conecta a la PC por `10.0.2.2:8080`; en Chrome, por `localhost:8080`.
+
+## Reporte
+
+[Reporte del rediseño (PDF)](docs/Reporte_Rediseno_Biblioteca_ITT_Diego_Ernesto_Lopez_Vasquez_Y_Mario_Sanchez_Lopez.pdf)

@@ -21,12 +21,8 @@ class LibroTile extends StatelessWidget {
         title: const Text('Eliminar libro'),
         content: Text('¿Eliminar "${libro.titulo}"?'),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancelar')),
-          FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Eliminar')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Eliminar')),
         ],
       ),
     );
@@ -51,62 +47,65 @@ class LibroTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(color: cs.outlineVariant),
       ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 4, 12),
-        child: Row(
-          children: [
-            // "Portada" del libro con el color segun su estado
-            Container(
-              width: 48,
-              height: 64,
-              decoration: BoxDecoration(
-                color: color.withAlpha(35),
-                borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        // Al tocar la tarjeta se abre el detalle (GET /api/libros/{id})
+        onTap: () => context.push('/libro/${libro.id}'),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 12, 4, 12),
+          child: Row(
+            children: [
+              // "Portada" del libro con el color segun su estado
+              Container(
+                width: 48,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: color.withAlpha(35),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  libro.disponible ? Icons.menu_book : Icons.lock_clock,
+                  color: color,
+                ),
               ),
-              child: Icon(
-                libro.disponible ? Icons.menu_book : Icons.lock_clock,
-                color: color,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      libro.titulo,
+                      style: textos.titleMedium,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      libro.autor,
+                      style: textos.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Text('${libro.anio}', style: textos.bodySmall),
+                        const SizedBox(width: 8),
+                        _EstadoChip(disponible: libro.disponible),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    libro.titulo,
-                    style: textos.titleMedium,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    libro.autor,
-                    style:
-                        textos.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Text('${libro.anio}', style: textos.bodySmall),
-                      const SizedBox(width: 8),
-                      _EstadoChip(disponible: libro.disponible),
-                    ],
-                  ),
-                ],
+              IconButton(
+                tooltip: 'Editar (PUT)',
+                icon: const Icon(Icons.edit_outlined),
+                onPressed: () => context.push('/editar/${libro.id}'),
               ),
-            ),
-            IconButton(
-              tooltip: 'Editar (PUT)',
-              icon: const Icon(Icons.edit_outlined),
-              onPressed: () => context.push('/editar/${libro.id}'),
-            ),
-            IconButton(
-              tooltip: 'Eliminar (DELETE)',
-              icon: Icon(Icons.delete_outline, color: cs.error),
-              onPressed: () => _confirmarEliminar(context),
-            ),
-          ],
+              IconButton(
+                tooltip: 'Eliminar (DELETE)',
+                icon: Icon(Icons.delete_outline, color: cs.error),
+                onPressed: () => _confirmarEliminar(context),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -130,8 +129,7 @@ class _EstadoChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(disponible ? Icons.check_circle : Icons.schedule,
-              size: 14, color: color),
+          Icon(disponible ? Icons.check_circle : Icons.schedule, size: 14, color: color),
           const SizedBox(width: 4),
           Text(
             disponible ? 'Disponible' : 'Prestado',

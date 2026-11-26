@@ -10,7 +10,15 @@ class LibroRepository {
   // ✅ GET
   Future<List<Libro>> getLibros() async {
     final data = await service.getLibros();
-    return data.map((e) => Libro.fromJson(e as Map<String, dynamic>)).toList();
+    return data
+        .map((e) => Libro.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  // GET por id (pantalla de detalle)
+  Future<Libro> getLibro(int id) async {
+    final data = await service.getLibro(id);
+    return Libro.fromJson(data);
   }
 
   // ✅ POST

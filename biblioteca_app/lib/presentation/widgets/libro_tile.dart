@@ -3,8 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/mensajes.dart';
 import '../../domain/models/libro.dart';
 import '../controllers/libro_controller.dart';
+import 'dialogo_confirmar.dart';
 
 /// Tarjeta de un libro con los botones Editar (PUT) y Eliminar (DELETE).
 class LibroTile extends StatelessWidget {
@@ -15,21 +17,15 @@ class LibroTile extends StatelessWidget {
     final messenger = ScaffoldMessenger.of(context);
     final controller = context.read<LibroController>();
 
-    final confirmar = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Eliminar libro'),
-        content: Text('¿Eliminar "${libro.titulo}"?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Eliminar')),
-        ],
-      ),
-    );
-    if (confirmar != true) return;
+    final confirmar = await confirmarEliminar(context, libro.titulo);
+    if (!confirmar) return;
 
     final error = await controller.eliminar(libro.id!);
-    messenger.showSnackBar(SnackBar(content: Text(error ?? 'Libro eliminado')));
+    if (error == null) {
+      Mensajes.exito(messenger, 'Libro eliminado');
+    } else {
+      Mensajes.error(messenger, error);
+    }
   }
 
   @override

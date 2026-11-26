@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/utils/mensajes.dart';
 import '../../domain/models/libro.dart';
 
 /// Formulario reutilizable para crear (POST) y editar (PUT).
@@ -98,10 +99,10 @@ class _LibroFormState extends State<LibroForm> {
     setState(() => _guardando = false);
 
     if (error == null) {
-      messenger.showSnackBar(const SnackBar(content: Text('Guardado correctamente')));
+      Mensajes.exito(messenger, 'Guardado correctamente');
       context.pop();
     } else {
-      messenger.showSnackBar(SnackBar(content: Text(error)));
+      Mensajes.error(messenger, error);
     }
   }
 

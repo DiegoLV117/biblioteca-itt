@@ -1,9 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/utils/mensajes.dart';
 import '../../domain/models/libro.dart';
 import '../controllers/libro_controller.dart';
+import '../widgets/dialogo_confirmar.dart';
 
 /// Detalle de un libro. Consume GET /api/libros/{id} (Reto de la practica).
 class DetalleLibroScreen extends StatefulWidget {
@@ -25,6 +28,29 @@ class _DetalleLibroScreenState extends State<DetalleLibroScreen> {
 
   void _cargar() {
     _futuro = context.read<LibroController>().repo.getLibro(widget.id);
+  }
+
+  /// Abre el formulario de edicion y al regresar recarga el detalle.
+  Future<void> _editar(Libro libro) async {
+    await context.push('/editar/${libro.id}');
+    if (mounted) setState(_cargar);
+  }
+
+  /// Pide confirmacion, hace el DELETE y regresa a la lista.
+  Future<void> _eliminar(Libro libro) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final controller = context.read<LibroController>();
+    final confirmar = await confirmarEliminar(context, libro.titulo);
+    if (!confirmar) return;
+
+    final error = await controller.eliminar(libro.id!);
+    if (!mounted) return;
+    if (error == null) {
+      Mensajes.exito(messenger, 'Libro eliminado');
+      context.pop();
+    } else {
+      Mensajes.error(messenger, error);
+    }
   }
 
   @override
@@ -141,6 +167,30 @@ class _DetalleLibroScreenState extends State<DetalleLibroScreen> {
               ),
             ],
           ),
+        ),
+        const SizedBox(height: 24),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () => _editar(libro),
+                icon: const Icon(Icons.edit_outlined),
+                label: const Text('Editar'),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: cs.error,
+                  foregroundColor: cs.onError,
+                ),
+                onPressed: () => _eliminar(libro),
+                icon: const Icon(Icons.delete_outline),
+                label: const Text('Eliminar'),
+              ),
+            ),
+          ],
         ),
       ],
     );
